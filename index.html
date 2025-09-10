@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Git & GitHub — Conceitos, Fluxo e Conflitos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="brand"><span class="dot"></span><span>Git & GitHub — Guia Rápido</span></div>
+      <nav aria-label="Navegação">
+        <a href="#conceitos">Conceitos</a>
+        <a href="#fluxo">Fluxo</a>
+        <a href="#conflitos">Resolver Conflitos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Essencial de Git e GitHub</h1>
+
+    <section id="conceitos" aria-labelledby="h-conceitos">
+      <h2 id="h-conceitos">Conceitos de Git e GitHub</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>O que é <code>git</code>?</h3>
+          <p>Git é um <strong>sistema de controle de versão distribuído</strong>. Ele registra o histórico de alterações do seu projeto e permite trabalhar em paralelo com outras pessoas.</p>
+          <ul>
+            <li><span class="badge">commit</span> — ponto no tempo com suas mudanças e uma mensagem.</li>
+            <li><span class="badge">branch</span> — linha de desenvolvimento isolada (ex.: <code>main</code>, <code>feature/login</code>).</li>
+            <li><span class="badge">merge</span> — une o histórico de duas branches.</li>
+            <li><span class="badge">rebase</span> — reaplica seus commits sobre outra base, criando histórico linear.</li>
+            <li><span class="badge">remote</span> — repositório hospedado (ex.: GitHub) para compartilhar código.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>O que é <code>GitHub</code>?</h3>
+          <p>GitHub é uma plataforma de hospedagem de <em>repositórios git</em> com colaboração: issues, pull requests, revisões, CI/CD e gerenciamento de permissões.</p>
+          <ul>
+            <li><span class="badge">fork</span> — cópia do repo na sua conta para contribuir com projetos de terceiros.</li>
+            <li><span class="badge">pull request (PR)</span> — proposta de mudança de uma branch para outra, com revisão.</li>
+            <li><span class="badge">issue</span> — tarefa/bug/idéia rastreável.</li>
+            <li><span class="badge">actions</span> — automações (testes, build, deploy) a cada push/PR.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="tip"><strong>Dica:</strong> Commits pequenos e bem descritos facilitam revisão, <code>git blame</code> e revert.</p>
+    </section>
+
+    <section id="fluxo" aria-labelledby="h-fluxo">
+      <h2 id="h-fluxo">Fluxo recomendado (Git/GitHub)</h2>
+      <ol>
+        <li class="step">
+          <div>
+            <strong>1) Clonar e configurar</strong>
+            <pre><code>git clone &lt;url-do-repo&gt;
+cd &lt;pasta&gt;
+# Defina seu usuário (uma vez por máquina)
+git config --global user.name "Seu Nome"
+git config --global user.email "voce@example.com"</code></pre>
+          </div>
+        </li>
+        <li class="step">
+          <div>
+            <strong>2) Atualizar a base local</strong>
+            <pre><code>git checkout main
+# traz as últimas mudanças do remoto
+git pull --ff-only origin main</code></pre>
+            <p class="small">Use <code>--ff-only</code> para evitar merges desnecessários no histórico principal.</p>
+          </div>
+        </li>
+        <li class="step">
+          <div>
+            <strong>3) Criar uma branch por tarefa</strong>
+            <pre><code># nome curto e descritivo
+git checkout -b feature/login</code></pre>
+          </div>
+        </li>
+        <li class="step">
+          <div>
+            <strong>4) Trabalhar e comitar</strong>
+            <pre><code># ver status/alterações
+git status
+git add &lt;arquivos&gt;
+# mensagem no imperativo, curta + contexto
+git commit -m "cria formulário de login com validação"</code></pre>
+          </div>
+        </li>
+        <li class="step">
+          <div>
+            <strong>5) Sincronizar frequentemente</strong>
+            <pre><code># rebase mantém histórico linear
+git fetch origin
+git rebase origin/main</code></pre>
+            <p class="small">Caso prefira, <code>git merge origin/main</code> também funciona, porém cria commits de merge.</p>
+          </div>
+        </li>
+        <li class="step">
+          <div>
+            <strong>6) Enviar e abrir PR</strong>
+            <pre><code>git push -u origin feature/login
+# No GitHub: abrir Pull Request para a branch main</code></pre>
+            <p class="tip">Garanta testes passando e descrição clara no PR. Solicite revisão.</p>
+          </div>
+        </li>
+        <li class="step">
+          <div>
+            <strong>7) Revisão, ajustes e merge</strong>
+            <p>Após aprovarem, faça <code>merge</code> (ou <code>squash merge</code> para condensar commits) e delete a branch.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section id="conflitos" aria-labelledby="h-conflitos">
+      <h2 id="h-conflitos">Como resolver conflitos</h2>
+      <p>Conflitos acontecem quando duas mudanças tocam as mesmas linhas em arquivos diferentes. Passo a passo:</p>
+
+      <h3>1) Reproduzir o conflito com segurança</h3>
+      <pre><code># atualize sua branch com a base mais recente
+git fetch origin
+git rebase origin/main  # ou: git merge origin/main</code></pre>
+
+      <h3>2) Ver o que conflitou</h3>
+      <pre><code>git status   # lista arquivos em conflito
+# Abra os arquivos marcados com &lt;&lt;&lt;&lt;&lt;&lt;&lt; e &gt;&gt;&gt;&gt;&gt;&gt;&gt;</code></pre>
+      <div class="card">
+        <p class="small">Marcadores típicos num arquivo:</p>
+        <pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+sua versão
+=======
+versão da base (origin/main)
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/main</code></pre>
+      </div>
+
+      <h3>3) Editar manualmente e marcar como resolvido</h3>
+      <pre><code># edite e mantenha a versão correta (ou combine as duas)
+# depois:
+git add caminho/arquivo.ext</code></pre>
+
+      <h3>4) Continuar o fluxo</h3>
+      <pre><code># se estiver num rebase:
+git rebase --continue
+# se estiver num merge:
+git commit   # cria o commit de merge</code></pre>
+
+      <h3>5) Testar e enviar</h3>
+      <pre><code>npm test      # ou seus testes/build
+git push</code></pre>
+
+      <div class="warn">
+        <p><strong>Se algo der errado:</strong></p>
+        <ul>
+          <li><code>git rebase --abort</code> — cancela o rebase e volta ao estado anterior.</li>
+          <li><code>git merge --abort</code> — cancela o merge em andamento.</li>
+          <li><code>git restore --source=HEAD -- &lt;arquivo&gt;</code> — descarta alterações no arquivo.</li>
+        </ul>
+      </div>
+
+      <h3>Ferramentas que ajudam</h3>
+      <ul>
+        <li>VS Code: painel de Merge com botões (Accept Current/Incoming/Both).</li>
+        <li><code>git mergetool</code>: integra com difftools (Meld, KDiff3, Beyond Compare).</li>
+        <li>Proteja a <code>main</code> no GitHub com PRs + revisões obrigatórias para reduzir conflitos.</li>
+      </ul>
+
+      <div class="tip">
+        <p><strong>Boas práticas para evitar conflitos:</strong></p>
+        <ul>
+          <li>Branches curtas e focadas; sincronize com a base diariamente.</li>
+          <li>Arquitetura modular: reduza arquivos muito grandes com responsabilidades únicas.</li>
+          <li>Padronize formatação (Prettier/EditorConfig) e convenções de mensagem de commit.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <p class="small">Conteúdo reduzido apenas aos tópicos solicitados: conceitos, fluxo e resolução de conflitos.</p>
+    </footer>
+  </main>
+</body>
+</html>
